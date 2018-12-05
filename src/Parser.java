@@ -3,7 +3,6 @@ import java.text.ParseException;
 
 public class Parser {
     LexicalAnalyser lex;
-    int counter = 0;
 
     private Tree Reg() throws ParseException {
         switch (lex.curToken()) {
@@ -13,15 +12,15 @@ public class Parser {
                 Tree choice = Choice();
                 // Reg'
                 Tree regPrime = RegPrime();
-                return new Tree(format("Reg"), choice, regPrime);
+                return new Tree("Reg", choice, regPrime);
             case BAR:
                 // Reg'
                 Tree regPrime1 = RegPrime();
-                return new Tree(format("Reg"), regPrime1);
+                return new Tree("Reg", regPrime1);
             case CLOSE:
             case END:
                 // eps
-                return new Tree(format("Reg"));
+                return new Tree("Reg");
             default:
                 throw new AssertionError();
         }
@@ -35,12 +34,12 @@ public class Parser {
                 Tree part = Part();
                 // Choice'
                 Tree choicePrime = ChoicePrime();
-                return new Tree(format("Choice"), part, choicePrime);
+                return new Tree("Choice", part, choicePrime);
             case CLOSE:
             case BAR:
             case END:
                 // eps
-                return new Tree(format("Choice"));
+                return new Tree("Choice");
             default:
                 throw new AssertionError();
         }
@@ -54,12 +53,12 @@ public class Parser {
                 Tree entity = Entity();
                 // Kleene
                 Tree kleene = Kleene();
-                return new Tree(format("Part"), entity, kleene);
+                return new Tree("Part", entity, kleene);
             case CLOSE:
             case BAR:
             case END:
                 // eps
-                return new Tree(format("Part"));
+                return new Tree("Part");
             default:
                 throw new AssertionError();
         }
@@ -70,14 +69,14 @@ public class Parser {
             case STAR:
                 // *
                 lex.nextToken();
-                return new Tree(format("Kleene"), new Tree(format("*")));
+                return new Tree("Kleene", new Tree("*"));
             case OPEN:
             case CLOSE:
             case BAR:
             case LETTER:
             case END:
                 // eps
-                return new Tree(format("Kleene"));
+                return new Tree("Kleene");
             default:
                 throw new AssertionError();
         }
@@ -95,16 +94,16 @@ public class Parser {
                     throw new ParseException(") expected at position ", lex.curPos());
                 }
                 lex.nextToken();
-                return new Tree(format("Entity"), new Tree(format("(")), reg, new Tree(format(")")));
+                return new Tree("Entity", new Tree("("), reg, new Tree(")"));
             case LETTER:
                 // [a..z]
                 lex.nextToken();
-                return new Tree(format("Entity"), new Tree(format("Letter")));
+                return new Tree("Entity", new Tree("Letter"));
             case CLOSE:
             case BAR:
             case END:
                 // eps
-                return new Tree(format("Entity"));
+                return new Tree("Entity");
             default:
                 throw new AssertionError();
         }
@@ -119,11 +118,11 @@ public class Parser {
                 Tree choice = Choice();
                 // Reg''
                 Tree regPrime = RegPrime();
-                return new Tree(format("RegPrime"), new Tree(format("|")), choice, regPrime);
+                return new Tree("RegPrime", new Tree("|"), choice, regPrime);
             case CLOSE:
             case END:
                 // eps
-                return new Tree(format("RegPrime"));
+                return new Tree("RegPrime");
             default:
                 throw new AssertionError();
         }
@@ -150,19 +149,15 @@ public class Parser {
             case LETTER:
                 // Choice
                 Tree choice = Choice();
-                return new Tree(format("ChoicePrime"), choice);
+                return new Tree("ChoicePrime", choice);
             case CLOSE:
             case BAR:
             case END:
                 // eps
-                return new Tree(format("ChoicePrime"));
+                return new Tree("ChoicePrime");
             default:
                 throw new AssertionError();
         }
-    }
-
-    String format(String string) {
-        return string + (++counter);
     }
 
     Tree parse(InputStream is) throws ParseException {

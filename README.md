@@ -16,7 +16,7 @@
 
 > Reg -> Reg|Choice  
 > Reg -> Choice  
-> Reg -> ε 
+> Reg -> ε  
 > Choice -> ChoicePart  
 > Choice -> Part  
 > Part -> EntityKleene  
