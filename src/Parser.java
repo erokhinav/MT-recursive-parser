@@ -22,7 +22,7 @@ public class Parser {
                 // eps
                 return new Tree("Reg");
             default:
-                throw new AssertionError();
+                throw new ParseException("Invalid token " + lex.curToken() + " in Reg()", lex.curPos());
         }
     }
 
@@ -41,7 +41,7 @@ public class Parser {
                 // eps
                 return new Tree("Choice");
             default:
-                throw new AssertionError();
+                throw new ParseException("Invalid token " + lex.curToken() + " in Choice()", lex.curPos());
         }
     }
 
@@ -52,7 +52,7 @@ public class Parser {
                 // Entity
                 Tree entity = Entity();
                 // Kleene
-                Tree kleene = Kleene();
+                Tree kleene = Unary();
                 return new Tree("Part", entity, kleene);
             case CLOSE:
             case BAR:
@@ -60,16 +60,20 @@ public class Parser {
                 // eps
                 return new Tree("Part");
             default:
-                throw new AssertionError();
+                throw new ParseException("Invalid token " + lex.curToken() + " in Part()", lex.curPos());
         }
     }
 
-    private Tree Kleene() throws ParseException {
+    private Tree Unary() throws ParseException {
         switch (lex.curToken()) {
             case STAR:
                 // *
                 lex.nextToken();
                 return new Tree("Kleene", new Tree("*"));
+            case PLUS:
+                // +
+                lex.nextToken();
+                return new Tree("Kleene", new Tree("+"));
             case OPEN:
             case CLOSE:
             case BAR:
@@ -78,7 +82,7 @@ public class Parser {
                 // eps
                 return new Tree("Kleene");
             default:
-                throw new AssertionError();
+                throw new ParseException("Invalid token " + lex.curToken() + " in Kleene()", lex.curPos());
         }
     }
 
@@ -105,7 +109,7 @@ public class Parser {
                 // eps
                 return new Tree("Entity");
             default:
-                throw new AssertionError();
+                throw new ParseException("Invalid token " + lex.curToken() + " in Entity()", lex.curPos());
         }
     }
 
@@ -124,7 +128,7 @@ public class Parser {
                 // eps
                 return new Tree("RegPrime");
             default:
-                throw new AssertionError();
+                throw new ParseException("Invalid token " + lex.curToken() + " in RegPrime()", lex.curPos());
         }
     }
 
@@ -156,7 +160,7 @@ public class Parser {
                 // eps
                 return new Tree("ChoicePrime");
             default:
-                throw new AssertionError();
+                throw new ParseException("Invalid token " + lex.curToken() + " in ChoicePrime()", lex.curPos());
         }
     }
 
@@ -165,7 +169,7 @@ public class Parser {
         lex.nextToken();
         Tree tree = Reg();
         if (lex.curToken() != Token.END) {
-            throw new AssertionError();
+            throw new AssertionError("Reached end of expression");
         }
         return tree;
     }

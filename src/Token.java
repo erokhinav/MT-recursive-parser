@@ -1,3 +1,3 @@
 public enum Token {
-    LETTER, BAR, STAR, OPEN, CLOSE, END
+    LETTER, BAR, STAR, PLUS, OPEN, CLOSE, END
 }

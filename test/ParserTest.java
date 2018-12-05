@@ -59,15 +59,21 @@ public class ParserTest {
     }
 
     @Test
+    public void plus() {
+        string = "a+";
+        check();
+    }
+
+    @Test
     public void wrong() {
-        InputStream stream = new ByteArrayInputStream(")".getBytes(StandardCharsets.UTF_8));
+        InputStream stream = new ByteArrayInputStream("a*+".getBytes(StandardCharsets.UTF_8));
         try {
             parser.parse(stream);
             System.out.println("Error");
         } catch (AssertionError e) {
-            System.out.println("Passed");
+            System.out.println(e.getMessage());
         } catch (ParseException e) {
-            System.out.println("Error");
+            System.out.println(e.getMessage());
         }
     }
 

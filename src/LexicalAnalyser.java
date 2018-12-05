@@ -33,6 +33,10 @@ public class LexicalAnalyser {
                 nextChar();
                 curToken = Token.STAR;
                 break;
+            case '+':
+                nextChar();
+                curToken = Token.PLUS;
+                break;
             case '(':
                 nextChar();
                 curToken = Token.OPEN;
@@ -45,7 +49,7 @@ public class LexicalAnalyser {
                 curToken = Token.END;
                 break;
             default:
-                if (Character.isLetter(curChar)) {
+                if (Character.isLowerCase(curChar)) {
                     nextChar();
                     curToken = Token.LETTER;
                 } else {
