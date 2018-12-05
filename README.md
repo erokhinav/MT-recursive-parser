@@ -15,10 +15,10 @@
 ## 1. Разработка грамматики
 
 > Reg -> Reg|Choice  
-> Reg -> ε  
 > Reg -> Choice  
+> Reg -> ε 
 > Choice -> ChoicePart  
-> Choice -> ε  
+> Choice -> Part  
 > Part -> EntityKleene  
 > Kleene -> ε  
 > Kleene -> *  
@@ -37,12 +37,10 @@
 
 > Reg -> ChoiceReg'  
 > Reg -> Choice  
-> Reg -> ε  
-> Reg -> Reg'  
+> Reg' -> ε  
 > Reg' -> |ChoiceReg'  
-> Reg' -> |Choice  
 > Choice -> PartChoice  
-> Choice -> ε   
+> Choice -> Part   
 > Part -> EntityKleene  
 > Kleene -> ε  
 > Kleene -> *  
@@ -62,15 +60,16 @@
 
 > Reg -> ChoiceReg'  
 > Reg -> Reg'  
-> Reg' -> |ChoiceReg'  
 > Reg' -> ε  
-> Choice -> PartChoice  
-> Choice -> ε   
-> Part -> EntityKleene  
+> Reg' -> |ChoiceReg'
+> Choice -> PartChoice'   
+> Choice' -> ε
+> Choice' -> Choice
+> Part -> EntityKleene
 > Kleene -> ε  
 > Kleene -> *  
 > Entity -> [a..z]  
-> Entity -> (Reg) 
+> Entity -> (Reg)
 
 Нетерминал | Описание
 --- | ---
@@ -80,6 +79,7 @@
 *Kleene* | Операция замыкания Клини или пустая строка
 *Entity* | Выражение в скобках или буква
 *Reg'* | Продолжение регулярного выражения 
+*Choice'* | Продолжение последнего выражения, отделенного операцией выбора
 
 ## 2. Построение лексического анализатора
 
@@ -101,8 +101,11 @@
 | Нетерминал | FIRST                 | FOLLOW                        |
 | ---------- |---------------------- | ----------------------------- |
 | *Reg*      | `(` `\|` `[a..z]` `ε` | `)` `$`                       |
-| *Choice*   | `(` `[a..z]` `ε`      | `)` `\|` `$`                  |
+| *Choice*   | `(` `[a..z]`          | `)` `\|` `$`                  |
 | *Part*     | `(` `[a..z]`          | `(` `\|` `[a..z]` `)` `$`     |
 | *Kleene*   | `*` `ε`               | `(` `\|` `[a..z]` `)` `$`     |
 | *Entity*   | `(` `[a..z]`          | `*` `(` `\|` `[a..z]` `)` `$` |
 | *Reg'*     | `\|` `ε`              | `)` `$`                       |
+| *Choice'*  | `(` `[a..z]` 'ε'      | `)` `\|` `$`                  |
+
+Условия теоремы, связывающие LL(1) грамматики с множествами FIRST и FOLLOW, выполняются.
